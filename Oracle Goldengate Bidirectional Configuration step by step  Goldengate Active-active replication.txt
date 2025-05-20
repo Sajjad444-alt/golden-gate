@@ -1,0 +1,61 @@
+
+
+Oracle Goldengate Bidirectional Configuration step by step || Goldengate Active-active replication
+*************************************************************************************************
+
+
+
+verify entries of both servers should be in hosts file of each other 
+
+On node1:
+========
+
+[root@srv1 ~]# cat /etc/hosts
+192.168.100.230         srv1
+192.168.100.231         srv2
+
+
+
+On node2:
+========
+
+
+[root@srv2 ~]# cat /etc/hosts
+127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+192.168.100.230         srv1
+192.168.100.231         srv2
+
+
+
+
+
+[root@srv1 ~]# ping srv1
+PING srv1 (192.168.100.230) 56(84) bytes of data.
+64 bytes from srv1 (192.168.100.230): icmp_seq=1 ttl=64 time=0.038 ms
+64 bytes from srv1 (192.168.100.230): icmp_seq=2 ttl=64 time=0.055 ms
+
+--- srv1 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 999ms
+rtt min/avg/max/mdev = 0.038/0.046/0.055/0.010 ms
+[root@srv1 ~]#
+[root@srv1 ~]#
+[root@srv1 ~]#
+[root@srv1 ~]# ping srv2
+PING srv2 (192.168.100.231) 56(84) bytes of data.
+64 bytes from srv2 (192.168.100.231): icmp_seq=1 ttl=64 time=1.98 ms
+64 bytes from srv2 (192.168.100.231): icmp_seq=2 ttl=64 time=0.824 ms
+64 bytes from srv2 (192.168.100.231): icmp_seq=3 ttl=64 time=1.03 ms
+
+
+
+
+
+
+*******************************************************
+
+Step#02 :
+=======
+
+
+
