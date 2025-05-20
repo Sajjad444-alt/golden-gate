@@ -505,3 +505,6 @@ Credential store created.
 GGSCI (srv1) 3> dblogin useridalias alias_ggadmin
 Successfully logged into database.
 
+
+
+
