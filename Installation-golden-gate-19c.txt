@@ -1,0 +1,507 @@
+Golden gate installation :
+=========================
+
+
+
+download software 19c 
+
+
+su - oracle 
+
+
+mkdir /u01/app/GG_HOME
+
+[oracle@srv1 media]$ unzip V983658-01.zip
+
+[oracle@srv1 media]$ cd fbo_ggs_Linux_x64_shiphome/Disk1/
+
+[oracle@srv1 ContentsXML]$ pwd
+/u01/oraInventory/ContentsXML
+
+
+cat inventory.xml | grep -i "/u01/app/GG_HOME"
+
+
+[oracle@srv1 ContentsXML]$ cat inventory.xml | grep -i "/u01/app/GG_HOME"
+<HOME NAME="OraHome1" LOC="/u01/app/GG_HOME" TYPE="O" IDX="2"/>
+
+
+
+
+8. Set Environmental Variables
+
+
+
+[oracle@rac1 ~]$ cat 19cogg.env
+GG19C=/u01/app/GG_HOME; export GG19C
+ORACLE_HOME=/u01/app/oracle/product/19.0.0/dbhome_1;  export ORACLE_HOME
+ORACLE_SID=testdb1; export ORACLE_SID
+PATH=$PATH:/u01/app/GG_HOME; export PATH
+LD_LIBRARY_PATH=$ORACLE_HOME/lib:/u01/app/GG_HOME; export LD_LIBRARY_PATH
+alias ggsci='cd $GG19C; ./ggsci'
+
+
+
+
+
+. Verify Oracle GoldenGate libraries are linked with the Oracle Libraries
+
+
+[oracle@srv1 ~]$  . 19cogg.env
+[oracle@srv1 ~]$
+[oracle@srv1 ~]$
+[oracle@srv1 ~]$
+[oracle@srv1 ~]$
+[oracle@srv1 ~]$
+[oracle@srv1 ~]$
+[oracle@srv1 ~]$ env | grep ORACLE
+ORACLE_SID=testdb1
+ORACLE_BASE=/u01/app
+ORACLE_HOME=/u01/app/oracle/product/19.0.0/dbhome_1
+
+
+
+
+[oracle@srv1 ~]$ env | grep LD_LIBR
+LD_LIBRARY_PATH=/u01/app/oracle/product/19.0.0/dbhome_1/lib:/u01/app/GG_HOME
+
+
+
+[oracle@srv1 ~]$ cd /u01/app/GG_HOME
+
+
+
+[oracle@srv1 GG_HOME]$ ldd mgr
+        linux-vdso.so.1 =>  (0x00007ffecc79c000)
+        librt.so.1 => /lib64/librt.so.1 (0x00007f545e165000)
+        libdl.so.2 => /lib64/libdl.so.2 (0x00007f545df60000)
+        libgglog.so => /u01/app/GG_HOME/./libgglog.so (0x00007f545dbfa000)
+        libggutil.so => /u01/app/GG_HOME/./libggutil.so (0x00007f545d9de000)
+        libggrepo.so => /u01/app/GG_HOME/./libggrepo.so (0x00007f545d723000)
+        libdb-6.1.so => /u01/app/GG_HOME/./libdb-6.1.so (0x00007f545d30d000)
+        liblmdb.so => /u01/app/GG_HOME/./liblmdb.so (0x00007f545d0f8000)
+        libggperf.so => /u01/app/GG_HOME/./libggperf.so (0x00007f545cec5000)
+        libggparam.so => /u01/app/GG_HOME/./libggparam.so (0x00007f545b7ac000)
+        libicui18n.so.62 => /u01/app/GG_HOME/./libicui18n.so.62 (0x00007f545b2c7000)
+        libicuuc.so.62 => /u01/app/GG_HOME/./libicuuc.so.62 (0x00007f545aec5000)
+        libicudata.so.62 => /u01/app/GG_HOME/./libicudata.so.62 (0x00007f5458ead000)
+        libxerces-c-3.2.so => /u01/app/GG_HOME/./libxerces-c-3.2.so (0x00007f5458839000)
+        libpthread.so.0 => /lib64/libpthread.so.0 (0x00007f545861c000)
+        libantlr3c.so => /u01/app/GG_HOME/./libantlr3c.so (0x00007f5458401000)
+        libnnz19.so => /u01/app/oracle/product/19.0.0/dbhome_1/lib/libnnz19.so (0x00007f5457cb9000)
+        libclntsh.so.19.1 => /u01/app/oracle/product/19.0.0/dbhome_1/lib/libclntsh.so.19.1 (0x00007f5453caa000)
+        libclntshcore.so.19.1 => /u01/app/oracle/product/19.0.0/dbhome_1/lib/libclntshcore.so.19.1 (0x00007f545370a000)
+        libggnnzitp.so => /u01/app/GG_HOME/./libggnnzitp.so (0x00007f5452bf3000)
+        libstdc++.so.6 => /u01/app/GG_HOME/./libstdc++.so.6 (0x00007f545285b000)
+        libm.so.6 => /lib64/libm.so.6 (0x00007f5452559000)
+        libgcc_s.so.1 => /u01/app/GG_HOME/./libgcc_s.so.1 (0x00007f5452343000)
+        libc.so.6 => /lib64/libc.so.6 (0x00007f5451f74000)
+        /lib64/ld-linux-x86-64.so.2 (0x000056108e19b000)
+        libnsl.so.1 => /lib64/libnsl.so.1 (0x00007f5451d5a000)
+        libaio.so.1 => /lib64/libaio.so.1 (0x00007f5451b57000)
+        libresolv.so.2 => /lib64/libresolv.so.2 (0x00007f545193d000)
+
+
+
+
+[oracle@srv1 GG_HOME]$ ldd extract
+        linux-vdso.so.1 =>  (0x00007fff8ad9e000)
+        librt.so.1 => /lib64/librt.so.1 (0x00007f74a6d60000)
+        libdl.so.2 => /lib64/libdl.so.2 (0x00007f74a6b5b000)
+        libgglog.so => /u01/app/GG_HOME/./libgglog.so (0x00007f74a67f5000)
+        libggutil.so => /u01/app/GG_HOME/./libggutil.so (0x00007f74a65d9000)
+        libggrepo.so => /u01/app/GG_HOME/./libggrepo.so (0x00007f74a631e000)
+        libdb-6.1.so => /u01/app/GG_HOME/./libdb-6.1.so (0x00007f74a5f08000)
+        liblmdb.so => /u01/app/GG_HOME/./liblmdb.so (0x00007f74a5cf3000)
+        libggperf.so => /u01/app/GG_HOME/./libggperf.so (0x00007f74a5ac0000)
+        libggparam.so => /u01/app/GG_HOME/./libggparam.so (0x00007f74a43a7000)
+        libicui18n.so.62 => /u01/app/GG_HOME/./libicui18n.so.62 (0x00007f74a3ec2000)
+        libicuuc.so.62 => /u01/app/GG_HOME/./libicuuc.so.62 (0x00007f74a3ac0000)
+        libicudata.so.62 => /u01/app/GG_HOME/./libicudata.so.62 (0x00007f74a1aa8000)
+        libxerces-c-3.2.so => /u01/app/GG_HOME/./libxerces-c-3.2.so (0x00007f74a1434000)
+        libpthread.so.0 => /lib64/libpthread.so.0 (0x00007f74a1217000)
+        libantlr3c.so => /u01/app/GG_HOME/./libantlr3c.so (0x00007f74a0ffc000)
+        libnnz19.so => /u01/app/oracle/product/19.0.0/dbhome_1/lib/libnnz19.so (0x00007f74a08b4000)
+        libclntsh.so.19.1 => /u01/app/oracle/product/19.0.0/dbhome_1/lib/libclntsh.so.19.1 (0x00007f749c8a5000)
+        libclntshcore.so.19.1 => /u01/app/oracle/product/19.0.0/dbhome_1/lib/libclntshcore.so.19.1 (0x00007f749c305000)
+        libggnnzitp.so => /u01/app/GG_HOME/./libggnnzitp.so (0x00007f749b7ee000)
+        libstdc++.so.6 => /u01/app/GG_HOME/./libstdc++.so.6 (0x00007f749b456000)
+        libm.so.6 => /lib64/libm.so.6 (0x00007f749b154000)
+        libgcc_s.so.1 => /u01/app/GG_HOME/./libgcc_s.so.1 (0x00007f749af3e000)
+        libc.so.6 => /lib64/libc.so.6 (0x00007f749ab6f000)
+        /lib64/ld-linux-x86-64.so.2 (0x0000555e7c7e8000)
+        libnsl.so.1 => /lib64/libnsl.so.1 (0x00007f749a955000)
+        libaio.so.1 => /lib64/libaio.so.1 (0x00007f749a752000)
+        libresolv.so.2 => /lib64/libresolv.so.2 (0x00007f749a538000)
+
+
+
+
+[oracle@srv1 GG_HOME]$ ldd replicat
+        linux-vdso.so.1 =>  (0x00007fff47777000)
+        librt.so.1 => /lib64/librt.so.1 (0x00007f0316a5b000)
+        libdl.so.2 => /lib64/libdl.so.2 (0x00007f0316856000)
+        libgglog.so => /u01/app/GG_HOME/./libgglog.so (0x00007f03164f0000)
+        libggutil.so => /u01/app/GG_HOME/./libggutil.so (0x00007f03162d4000)
+        libggrepo.so => /u01/app/GG_HOME/./libggrepo.so (0x00007f0316019000)
+        libdb-6.1.so => /u01/app/GG_HOME/./libdb-6.1.so (0x00007f0315c03000)
+        liblmdb.so => /u01/app/GG_HOME/./liblmdb.so (0x00007f03159ee000)
+        libggperf.so => /u01/app/GG_HOME/./libggperf.so (0x00007f03157bb000)
+        libggparam.so => /u01/app/GG_HOME/./libggparam.so (0x00007f03140a2000)
+        libicui18n.so.62 => /u01/app/GG_HOME/./libicui18n.so.62 (0x00007f0313bbd000)
+        libicuuc.so.62 => /u01/app/GG_HOME/./libicuuc.so.62 (0x00007f03137bb000)
+        libicudata.so.62 => /u01/app/GG_HOME/./libicudata.so.62 (0x00007f03117a3000)
+        libxerces-c-3.2.so => /u01/app/GG_HOME/./libxerces-c-3.2.so (0x00007f031112f000)
+        libpthread.so.0 => /lib64/libpthread.so.0 (0x00007f0310f12000)
+        libantlr3c.so => /u01/app/GG_HOME/./libantlr3c.so (0x00007f0310cf7000)
+        libnnz19.so => /u01/app/oracle/product/19.0.0/dbhome_1/lib/libnnz19.so (0x00007f03105af000)
+        libclntsh.so.19.1 => /u01/app/oracle/product/19.0.0/dbhome_1/lib/libclntsh.so.19.1 (0x00007f030c5a0000)
+        libclntshcore.so.19.1 => /u01/app/oracle/product/19.0.0/dbhome_1/lib/libclntshcore.so.19.1 (0x00007f030c000000)
+        libggnnzitp.so => /u01/app/GG_HOME/./libggnnzitp.so (0x00007f030b4e9000)
+        libstdc++.so.6 => /u01/app/GG_HOME/./libstdc++.so.6 (0x00007f030b151000)
+        libm.so.6 => /lib64/libm.so.6 (0x00007f030ae4f000)
+        libgcc_s.so.1 => /u01/app/GG_HOME/./libgcc_s.so.1 (0x00007f030ac39000)
+        libc.so.6 => /lib64/libc.so.6 (0x00007f030a86a000)
+        /lib64/ld-linux-x86-64.so.2 (0x000055f6f690b000)
+        libnsl.so.1 => /lib64/libnsl.so.1 (0x00007f030a650000)
+        libaio.so.1 => /lib64/libaio.so.1 (0x00007f030a44d000)
+        libresolv.so.2 => /lib64/libresolv.so.2 (0x00007f030a233000)
+
+
+
+
+
+[oracle@srv1 GG_HOME]$ ldd ggsci
+        linux-vdso.so.1 =>  (0x00007ffc08f1d000)
+        librt.so.1 => /lib64/librt.so.1 (0x00007f4cfb126000)
+        libdl.so.2 => /lib64/libdl.so.2 (0x00007f4cfaf21000)
+        libgglog.so => /u01/app/GG_HOME/./libgglog.so (0x00007f4cfabbb000)
+        libggutil.so => /u01/app/GG_HOME/./libggutil.so (0x00007f4cfa99f000)
+        libggrepo.so => /u01/app/GG_HOME/./libggrepo.so (0x00007f4cfa6e4000)
+        libdb-6.1.so => /u01/app/GG_HOME/./libdb-6.1.so (0x00007f4cfa2ce000)
+        liblmdb.so => /u01/app/GG_HOME/./liblmdb.so (0x00007f4cfa0b9000)
+        libggperf.so => /u01/app/GG_HOME/./libggperf.so (0x00007f4cf9e86000)
+        libggparam.so => /u01/app/GG_HOME/./libggparam.so (0x00007f4cf876d000)
+        libicui18n.so.62 => /u01/app/GG_HOME/./libicui18n.so.62 (0x00007f4cf8288000)
+        libicuuc.so.62 => /u01/app/GG_HOME/./libicuuc.so.62 (0x00007f4cf7e86000)
+        libicudata.so.62 => /u01/app/GG_HOME/./libicudata.so.62 (0x00007f4cf5e6e000)
+        libpthread.so.0 => /lib64/libpthread.so.0 (0x00007f4cf5c52000)
+        libxerces-c-3.2.so => /u01/app/GG_HOME/./libxerces-c-3.2.so (0x00007f4cf55dd000)
+        libantlr3c.so => /u01/app/GG_HOME/./libantlr3c.so (0x00007f4cf53c2000)
+        libnnz19.so => /u01/app/oracle/product/19.0.0/dbhome_1/lib/libnnz19.so (0x00007f4cf4c7a000)
+        libclntsh.so.19.1 => /u01/app/oracle/product/19.0.0/dbhome_1/lib/libclntsh.so.19.1 (0x00007f4cf0c6b000)
+        libclntshcore.so.19.1 => /u01/app/oracle/product/19.0.0/dbhome_1/lib/libclntshcore.so.19.1 (0x00007f4cf06cb000)
+        libggnnzitp.so => /u01/app/GG_HOME/./libggnnzitp.so (0x00007f4cefbb4000)
+        libstdc++.so.6 => /u01/app/GG_HOME/./libstdc++.so.6 (0x00007f4cef81c000)
+        libm.so.6 => /lib64/libm.so.6 (0x00007f4cef51a000)
+        libgcc_s.so.1 => /u01/app/GG_HOME/./libgcc_s.so.1 (0x00007f4cef304000)
+        libc.so.6 => /lib64/libc.so.6 (0x00007f4ceef35000)
+        /lib64/ld-linux-x86-64.so.2 (0x000055f8607aa000)
+        libnsl.so.1 => /lib64/libnsl.so.1 (0x00007f4ceed1a000)
+        libaio.so.1 => /lib64/libaio.so.1 (0x00007f4ceeb18000)
+        libresolv.so.2 => /lib64/libresolv.so.2 (0x00007f4cee8fe000)
+
+
+
+
+
+
+10. Create the required working directories for GoldenGate
+
+
+
+[oracle@srv1 GG_HOME]$ ggsci
+
+Oracle GoldenGate Command Interpreter for Oracle
+Version 19.1.0.0.4 OGGCORE_19.1.0.0.0_PLATFORMS_191017.1054_FBO
+Linux, x64, 64bit (optimized), Oracle 19c on Oct 17 2019 21:16:29
+Operating system character set identified as UTF-8.
+
+Copyright (C) 1995, 2019, Oracle and/or its affiliates. All rights reserved.
+
+
+
+GGSCI (srv1) 1>
+
+
+
+GGSCI (srv1) 1> CREATE SUBDIRS
+
+Creating subdirectories under current directory /u01/app/GG_HOME
+
+Parameter file                 /u01/app/GG_HOME/dirprm: already exists.
+Report file                    /u01/app/GG_HOME/dirrpt: already exists.
+Checkpoint file                /u01/app/GG_HOME/dirchk: already exists.
+Process status files           /u01/app/GG_HOME/dirpcs: already exists.
+SQL script files               /u01/app/GG_HOME/dirsql: already exists.
+Database definitions files     /u01/app/GG_HOME/dirdef: already exists.
+Extract data files             /u01/app/GG_HOME/dirdat: already exists.
+Temporary files                /u01/app/GG_HOME/dirtmp: already exists.
+Credential store files         /u01/app/GG_HOME/dircrd: already exists.
+Masterkey wallet files         /u01/app/GG_HOME/dirwlt: already exists.
+Dump files                     /u01/app/GG_HOME/dirdmp: already exists.
+
+
+
+
+GGSCI (srv1) 1> info all
+
+Program     Status      Group       Lag at Chkpt  Time Since Chkpt
+
+MANAGER     RUNNING
+
+
+GGSCI (srv1) 2> stop mgr
+Manager process is required by other GGS processes.
+Are you sure you want to stop it (y/n)?y
+
+Sending STOP request to MANAGER ...
+Request processed.
+Manager stopped.
+
+
+
+
+
+
+Congratulations, Oracle GoldenGate 19c is installed
+
+
+
+
+
+****************** Initial Setup    *********************************
+
+
+Step#01 :
+======
+
+
+SQL> Select supplemental_log_data_min ,force_logging from v$database ;
+
+SUPPLEME FORCE_LOGGING
+-------- ---------------------------------------
+NO       NO
+
+SQL>
+SQL>  alter database force logging ;
+
+Database altered.
+
+SQL>
+SQL> alter database add supplemental log data;
+
+Database altered.
+
+SQL>
+SQL> alter system  switch logfile ;
+
+System altered.
+
+SQL>
+SQL> Select supplemental_log_data_min ,force_logging from v$database ;
+
+SUPPLEME FORCE_LOGGING
+-------- ---------------------------------------
+YES      YES
+
+
+
+
+Step#02 :
+======
+
+
+
+SQL> show parameter enable_goldengate_replication
+
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------------------------
+enable_goldengate_replication        boolean     FALSE
+
+
+
+alter system set enable_goldengate_replication=true ;
+
+
+
+Step#03 :
+======
+
+
+create ggadmin user on source and target databases 
+************************************************
+
+SQL > create tablespace ggadmin  datafile '/u01/app/oradata/TESTDB1/datafile/ggadmin_01.dbf' size 2G autoextend on ;
+
+SQL > create user ggadmin identified by ggadmin default tablespace ggadmin quota unlimited on ggadmin ;
+
+
+
+Step#04 :
+=======
+
+
+on both source and target database go to golden gate home location and run scripts creating all necessary objects to support DDL replication 
+
+[oracle@srv1 ~]$ cd $GG19C
+
+[oracle@srv1 GG_HOME]$ sqlplus / as sysdba
+
+
+@marker_setup 
+@ddl_setup
+@role_setup.sql 
+GRANT GGS_GGSUSER_ROLE TO ggadmin;
+@ddl_enable.sql 
+
+
+
+output:
+=====
+
+SQL> @marker_setup
+
+Marker setup script
+
+You will be prompted for the name of a schema for the Oracle GoldenGate database objects.
+NOTE: The schema must be created prior to running this script.
+NOTE: Stop all DDL replication before starting this installation.
+
+Enter Oracle GoldenGate schema name:GGADMIN
+
+
+Marker setup table script complete, running verification script...
+Please enter the name of a schema for the GoldenGate database objects:
+Setting schema name to GGADMIN
+
+MARKER TABLE
+-------------------------------
+OK
+
+MARKER SEQUENCE
+-------------------------------
+OK
+
+Script complete.
+
+
+
+
+
+
+Step#05 :
+=======
+
+
+
+
+grant create session ,connect ,resource , alter system to ggadmin ;
+
+EXEC DBMS_GOLDENGATE_AUTH.GRANT_ADMIN_PRIVILEGE(grantee=>'ggadmin' , privilege_type=>'CAPTURE' , grant_optional_privileges=>'*');
+
+
+Step#06 :
+======
+
+
+configure the stream pool 
+
+
+alter system set streams_pool_size=1024M scope=spfile ;
+
+
+show parameter streams_pool_size;
+
+
+repeat from step#01 to step#06 on target database as well 
+
+
+
+
+
+
+
+
+******************************************* EDIT MGR Parameter AND START THE manager process  ***********************************
+
+
+GG_SETUP : 
+
+./ggsci 
+
+edit param mgr 
+
+PORT 7809 
+DynamicPortList 7810-7820 
+PURGEOLDEXTRACTS ./dirdat/*, USECHECKPOINTS, MINKEEPDAYS 7
+AUTORESTART EXTRACT *, RETRIES 5, WAITMINUTES 5
+LAGREPORTMINUTES 5
+LAGINFOMINUTES 10
+LAGCRITICALMINUTES 15
+
+
+
+
+
+
+
+GGSCI (srv1) 10> view param mgr
+
+PORT 7809
+DynamicPortList 7810-7820
+PURGEOLDEXTRACTS ./dirdat/*, USECHECKPOINTS, MINKEEPDAYS 7
+AUTORESTART EXTRACT *, RETRIES 5, WAITMINUTES 5
+LAGREPORTMINUTES 5
+LAGINFOMINUTES 10
+LAGCRITICALMINUTES 15
+
+
+
+
+
+
+GGSCI (srv1) 4> start mgr
+Manager started.
+
+
+
+
+GGSCI (srv1) 11> info all
+
+Program     Status      Group       Lag at Chkpt  Time Since Chkpt
+
+MANAGER     RUNNING
+
+
+
+
+
+################   start mgr process ####################################
+
+
+
+> start mgr 
+
+> info all 
+
+
+
+################   Step create a credential store  for golden gate user   ###############################
+
+
+> add credentialstore 
+
+GGSCI (srv1) 12> add credentialstore
+
+Credential store created.
+
+
+> alter credentialstore  add user ggadmin , password ggadmin alias alias_ggadmin  
+
+> dblogin useridalias alias_ggadmin  
+
+
+GGSCI (srv1) 3> dblogin useridalias alias_ggadmin
+Successfully logged into database.
+
