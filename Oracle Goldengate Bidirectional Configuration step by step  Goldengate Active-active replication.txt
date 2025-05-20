@@ -57,5 +57,148 @@ PING srv2 (192.168.100.231) 56(84) bytes of data.
 Step#02 :
 =======
 
+on Source db :
+===========
+
+col USERNAME for a7
+col PASSWORD for a10
+col ACCOUNT_STATUS for a6
+col DEFAULT_TABLESPACE for a8
+col PROFILE for a10
+col LAST_LOGIN for a10
+SELECT username, default_tablespace, profile, authentication_type
+FROM dba_users
+WHERE account_status = 'OPEN';
+
+
+
+
+USERNAM DEFAULT_ PROFILE    AUTHENTI
+------- -------- ---------- --------
+SYS     SYSTEM   DEFAULT    PASSWORD
+SYSTEM  SYSTEM   DEFAULT    PASSWORD
+GGADMIN GGADMIN  DEFAULT    PASSWORD
+
+
+
+
+
+Creating and Granting a New User:
+=============================
+
+
+CREATE USER TEST1 IDENTIFIED BY TEST1 QUOTA unlimited ON users;
+GRANT connect, resource TO TEST1;
+
+
+
+SELECT USERNAME, USER_ID, PASSWORD, ACCOUNT_STATUS, LOCK_DATE, EXPIRY_DATE,
+       DEFAULT_TABLESPACE, TEMPORARY_TABLESPACE, CREATED, PROFILE, LAST_login from dba_users where username='TEST1';
+
+
+
+
+
+CREATE TABLE TEST1.DEMO1 (COL1 NUMBER);
+INSERT INTO TEST1.DEMO1 VALUES (1);
+COMMIT;
+SELECT * FROM TEST1.DEMO1;
+
+
+
+
+**********************
+
+
+
+On target database 
+
+
+
+col USERNAME for a7
+col PASSWORD for a10
+col ACCOUNT_STATUS for a6
+col DEFAULT_TABLESPACE for a8
+col PROFILE for a10
+col LAST_LOGIN for a10
+SELECT username, default_tablespace, profile, authentication_type
+FROM dba_users
+WHERE account_status = 'OPEN';
+
+
+
+
+
+CREATE USER TEST2 IDENTIFIED BY TEST2 QUOTA unlimited ON users;
+GRANT connect, resource TO TEST2;
+
+
+
+SELECT USERNAME, USER_ID, PASSWORD, ACCOUNT_STATUS, LOCK_DATE, EXPIRY_DATE,
+       DEFAULT_TABLESPACE, TEMPORARY_TABLESPACE, CREATED, PROFILE, LAST_login from dba_users where username='TEST2';
+	   
+	   
+	   
+	   
+	   
+CREATE TABLE TEST2.DEMO1 (COL1 NUMBER);
+INSERT INTO TEST2.DEMO1 VALUES (2);
+COMMIT;
+SELECT * FROM TEST2.DEMO1;
+
+
+
+
+*****************************************************************
+
+On source database srv1 
+
+Add tran data on source side : 
+=============================
+
+source side add trandata for particular table which we wants to replicate the data to the target database 
+
+
+> dblogin useridalias alias_ggadmin
+> add trandata TEST1.*
+
+
+
+********************   Configure Extract on Source Side:     **********************************
+
+
+ > edit param ext1
+
+
+
+extract ext1
+USERIDALIAS alias_ggadmin
+discardfile ./dirrpt/test.dsc, purge
+exttrail /u01/app/GG_HOME/dirdat/aa
+DDL INCLUDE MAPPED
+TABLE TEST1.*;
+
+
+
+
+
+Register and Start the Extract:
+******************************
+
+> dblogin useridalias alias_ggadmin
+
+register extract ext1 database
+add extract ext1, integrated tranlog, begin now
+add exttrail /u01/app/GG_HOME/dirdat/aa, extract ext1
+start extract ext1
+
+
+
+
+
+
+
+
+
 
 
